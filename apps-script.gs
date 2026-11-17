@@ -7,13 +7,14 @@
  *   (그 칸을 복사해서 투미숏츠메이커\매물\구역명.json 으로 저장하면 바로 제작 가능)
  * - 첨부한 사진·영상은 내 구글 드라이브의 '투미 마케팅 요청 첨부' 폴더 아래
  *   요청마다 폴더 하나씩(예: 20261117_1430 블로그 마천1구역 김철수) 저장되고,
- *   시트의 '첨부 폴더' 칸과 알림 메일에 그 폴더 링크가 들어갑니다.
+ *   시트의 '첨부 폴더' 칸과 디스코드 알림에 그 폴더 링크가 들어갑니다.
  *   폴더는 공유되지 않은 내 드라이브 폴더라 나만 볼 수 있습니다.
- * - 새 요청이 오면 아래 NOTIFY_EMAIL 로 메일이 갑니다.
+ * - 새 요청이 오면 아래 DISCORD_WEBHOOK_URL 채널로 디스코드 알림이 갑니다. (메일은 보내지 않음)
  */
 
-// 알림 받을 메일. 비워 두면 이 스크립트를 만든 계정으로 갑니다.
-const NOTIFY_EMAIL = '';
+// 디스코드 채널 웹후크 주소 (채널 설정 → 연동 → 웹후크 → 새 웹후크 → 웹후크 URL 복사)
+// 이 주소는 이 스크립트 안에만 있고, 공개 페이지(index.html)에는 들어가지 않습니다.
+const DISCORD_WEBHOOK_URL = '';
 // 첨부 파일을 모을 드라이브 폴더 이름 (없으면 자동으로 만듭니다)
 const ROOT_FOLDER_NAME = '투미 마케팅 요청 첨부';
 
@@ -51,13 +52,7 @@ function doPost(e) {
     lock.waitLock(10000);
     try { appendRow_(type, row); } finally { lock.releaseLock(); }
 
-    const to = NOTIFY_EMAIL || Session.getEffectiveUser().getEmail();
-    MailApp.sendEmail({
-      to: to,
-      subject: '[투미 ' + type + ' 요청] ' + fields['구역명'] + ' / ' + fields['담당자'],
-      body: (folderUrl ? '📷 첨부 사진·영상 ' + files.length + '개: ' + folderUrl + '\n\n' : '')
-        + (data.text || '') + '\n\n시트: ' + SpreadsheetApp.getActiveSpreadsheet().getUrl()
-    });
+    notifyDiscord_(type, fields, data.text, files.length, folderUrl);
 
     return json_({ ok: true });
   } catch (err) {
@@ -80,6 +75,23 @@ function appendRow_(sheetName, row) {
   sh.appendRow(headers.map(function (h) { return row[h] !== undefined ? row[h] : ''; }));
 }
 
+// 디스코드 알림. 실패해도 요청 저장은 그대로 성공 처리합니다(시트에는 이미 들어감).
+function notifyDiscord_(type, fields, text, fileCount, folderUrl) {
+  if (!DISCORD_WEBHOOK_URL) return;
+  const head = '📩 **[투미 ' + type + ' 요청] ' + fields['구역명'] + ' / ' + fields['담당자'] + '**\n'
+    + (folderUrl ? '📷 첨부 ' + fileCount + '개: ' + folderUrl + '\n' : '')
+    + '📋 시트: ' + SpreadsheetApp.getActiveSpreadsheet().getUrl() + '\n\n';
+  let body = String(text || '');
+  const room = 1990 - head.length;               // 디스코드 메시지 한도 2000자
+  if (body.length > room) body = body.slice(0, room - 20) + '\n…(나머지는 시트에서)';
+  try {
+    UrlFetchApp.fetch(DISCORD_WEBHOOK_URL, {
+      method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+      payload: JSON.stringify({ username: '투미 마케팅 요청', content: head + body, allowed_mentions: { parse: [] } })
+    });
+  } catch (err) { console.warn('디스코드 알림 실패: ' + err); }
+}
+
 function rootFolder_() {
   const it = DriveApp.getFoldersByName(ROOT_FOLDER_NAME);
   return it.hasNext() ? it.next() : DriveApp.createFolder(ROOT_FOLDER_NAME);
@@ -89,7 +101,7 @@ function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
 
-// 배포 전 테스트용: 편집기에서 이 함수를 한 번 실행하면 권한 승인 창이 뜨고, 시트에 테스트 줄이 들어갑니다.
+// 배포 전 테스트용: 편집기에서 이 함수를 한 번 실행하면 권한 승인 창이 뜨고, 시트에 테스트 줄이 들어가고 디스코드에 알림이 옵니다.
 function testRequest() {
   const res = doPost({ postData: { contents: JSON.stringify({
     type: 'blog',
