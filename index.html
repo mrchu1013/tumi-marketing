@@ -137,6 +137,11 @@
   .thumb img, .thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .thumb .size { position: absolute; left: 4px; bottom: 4px; background: rgba(0,0,0,.6); color: #fff; font-size: 11px; padding: 1px 6px; border-radius: 6px; }
   .thumb button { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; border-radius: 50%; border: 0; background: rgba(0,0,0,.65); color: #fff; cursor: pointer; font-size: 14px; line-height: 1; }
+  .filelist { list-style: none; margin: 10px 0 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .filelist li { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 8px 8px 8px 12px; font-size: 14px; }
+  .filelist .fname { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .filelist .fsize { color: var(--muted); font-size: 12px; flex: none; }
+  .filelist button { flex: none; width: 26px; height: 26px; border-radius: 50%; border: 0; background: rgba(0,0,0,.65); color: #fff; cursor: pointer; font-size: 14px; line-height: 1; }
   .upinfo { font-size: 13px; color: var(--muted); margin-top: 6px; }
   .upinfo.bad { color: var(--red); font-weight: 700; }
   details.more { margin: 2px 0 6px; font-size: 14px; }
@@ -282,6 +287,10 @@
           </table>
         </div>
         <div class="field">
+          <span class="lbl">작성한 파일 올리기<span class="hint">hwp·docx·pdf 등으로 작성한 요청서나 참고 자료가 있으면 올려 주세요. 요청서 파일을 올리면 위 표는 담당자·구역명만 적어도 됩니다.</span></span>
+          <div class="uploader" data-docs></div>
+        </div>
+        <div class="field">
           <span class="lbl">사진·동영상 올리기<span class="req">*</span><span class="hint">여러 장을 한 번에 고를 수 있습니다. 사진은 자동으로 용량을 줄여서 올립니다.</span></span>
           <div class="uploader" data-uploader></div>
         </div>
@@ -315,6 +324,10 @@
             <tr><th>구역의 장점<span class="req">*</span><br><small>(3가지)</small></th><td><ol class="pts"><li><input type="text" name="구역 장점 1" required maxlength="40" aria-label="구역 장점 1" placeholder="ex) 사업 지연 불확실성 감소"></li><li><input type="text" name="구역 장점 2" required maxlength="40" aria-label="구역 장점 2" placeholder="ex) 시청·광화문·여의도 직주근접"></li><li><input type="text" name="구역 장점 3" required maxlength="40" aria-label="구역 장점 3" placeholder="ex) 북아현뉴타운 완성 시 인프라 개선"></li></ol></td></tr>
             <tr><th><label for="s-ask">요청사항<br><small>(분위기·강조점·<br>참고 영상)</small></label></th><td><textarea id="s-ask" name="요청사항" rows="3"></textarea></td></tr>
           </table>
+        </div>
+        <div class="field">
+          <span class="lbl">작성한 파일 올리기<span class="hint">hwp·docx·pdf 등으로 작성한 요청서나 참고 자료가 있으면 올려 주세요. 요청서 파일을 올리면 위 표는 담당자·구역명만 적어도 됩니다.</span></span>
+          <div class="uploader" data-docs></div>
         </div>
         <div class="field">
           <span class="lbl">사진·영상 올리기<span class="hint">현장 사진이나 영상이 있으면 이모지 대신 사용합니다. 없으면 비워도 됩니다.</span></span>
@@ -424,21 +437,24 @@ async function shrinkImage(file) {
   }
 }
 
-function makeUploader(root) {
-  root.innerHTML = `<label class="drop"><input type="file" multiple accept="image/*,video/*">📷 사진·영상 고르기
-      <small>눌러서 고르거나 여기로 끌어다 놓으세요 · 최대 ${MAX_FILES}개, 합계 ${fmtMB(MAX_TOTAL)}</small></label>
-    <div class="thumbs"></div><div class="upinfo"></div>`;
-  const input = root.querySelector("input"), thumbs = root.querySelector(".thumbs"), info = root.querySelector(".upinfo"), drop = root.querySelector(".drop");
+// mode "media" = 사진·영상(썸네일, 사진 축소), "docs" = 아무 파일(목록, 원본 그대로)
+function makeUploader(root, mode = "media") {
+  const docs = mode === "docs";
+  root.innerHTML = `<label class="drop"><input type="file" multiple ${docs ? "" : 'accept="image/*,video/*"'}>${docs ? "📎 파일 고르기 (hwp·docx·pdf·엑셀 등)" : "📷 사진·영상 고르기"}
+      <small>눌러서 고르거나 여기로 끌어다 놓으세요 · 사진·영상과 합쳐 최대 ${MAX_FILES}개, 합계 ${fmtMB(MAX_TOTAL)}</small></label>
+    <${docs ? "ul class=\"filelist\"" : "div class=\"thumbs\""}></${docs ? "ul" : "div"}><div class="upinfo"></div>`;
+  const input = root.querySelector("input"), thumbs = root.querySelector(docs ? ".filelist" : ".thumbs"), info = root.querySelector(".upinfo"), drop = root.querySelector(".drop");
   let items = [], busy = 0;
   const total = () => items.reduce((s, it) => s + it.blob.size, 0);
 
   function render() {
     thumbs.innerHTML = "";
     items.forEach((it, i) => {
-      const d = document.createElement("div");
-      d.className = "thumb";
-      d.innerHTML = (it.kind === "video" ? `<video src="${it.url}" muted playsinline preload="metadata"></video>` : `<img src="${it.url}" alt="">`)
+      const d = document.createElement(docs ? "li" : "div");
+      if (docs) d.innerHTML = `<span>📄</span><span class="fname"></span><span class="fsize">${fmtMB(it.blob.size)}</span><button type="button" aria-label="삭제">✕</button>`;
+      else d.className = "thumb", d.innerHTML = (it.kind === "video" ? `<video src="${it.url}" muted playsinline preload="metadata"></video>` : `<img src="${it.url}" alt="">`)
         + `<span class="size">${it.kind === "video" ? "🎬 " : ""}${fmtMB(it.blob.size)}</span><button type="button" aria-label="삭제">✕</button>`;
+      if (docs) d.querySelector(".fname").textContent = it.name;
       d.querySelector("button").onclick = () => { URL.revokeObjectURL(it.url); items.splice(i, 1); render(); };
       thumbs.appendChild(d);
     });
@@ -449,13 +465,13 @@ function makeUploader(root) {
   }
 
   async function add(files) {
-    const list = [...files].filter(f => /^(image|video)\//.test(f.type) || /\.(heic|heif)$/i.test(f.name));
+    const list = docs ? [...files] : [...files].filter(f => /^(image|video)\//.test(f.type) || /\.(heic|heif)$/i.test(f.name));
     busy += list.length; render();
     for (const f of list) {
       if (items.length < MAX_FILES) {
-        const kind = f.type.startsWith("video") ? "video" : "image";
+        const kind = docs ? "doc" : f.type.startsWith("video") ? "video" : "image";
         const { blob, name } = kind === "image" ? await shrinkImage(f) : { blob: f, name: f.name };
-        items.push({ kind, blob, name, url: URL.createObjectURL(blob) });
+        items.push({ kind, blob, name, url: docs ? "" : URL.createObjectURL(blob) });
       }
       busy--; render();
     }
@@ -483,6 +499,21 @@ function makeUploader(root) {
   };
 }
 
+// 파일 칸 + 사진 칸을 하나처럼 다룹니다 (개수·용량 한도는 합쳐서).
+function bothUploaders(doc, media) {
+  return {
+    doc, media,
+    get count() { return doc.count + media.count; },
+    get busy() { return doc.busy || media.busy; },
+    get size() { return doc.size + media.size; },
+    get tooBig() { return this.size > MAX_TOTAL; },
+    get tooMany() { return this.count > MAX_FILES; },
+    names: () => [...doc.names(), ...media.names()],
+    clear() { doc.clear(); media.clear(); },
+    async payload() { return [...await doc.payload(), ...await media.payload()]; }
+  };
+}
+
 // ---------- 폼 공통 ----------
 function collect(form) {
   const fields = {};
@@ -505,7 +536,9 @@ function toText(type, fields, scenes, fileNames) {
 
 function validate(form, type) {
   let firstBad = null;
+  const always = ["담당자", "구역명", "사실 확인"];
   form.querySelectorAll("[required]").forEach(el => {
+    if (form._up.doc.count && !always.includes(el.name)) { el.style.borderColor = ""; return; }
     const bad = el.type === "checkbox" ? !el.checked : !el.value.trim();
     el.style.borderColor = bad ? "var(--red)" : "";
     if (bad && !firstBad) firstBad = el;
@@ -513,9 +546,10 @@ function validate(form, type) {
   if (firstBad) { firstBad.focus(); return "빨간 테두리 칸을 채워 주세요."; }
   const up = form._up;
   if (up.busy) return "사진을 정리하는 중이에요. 잠시 뒤 다시 눌러 주세요.";
+  if (up.tooMany) return `첨부는 합쳐서 ${MAX_FILES}개까지예요. 몇 개를 빼 주세요.`;
   if (up.tooBig) return `첨부 파일이 ${fmtMB(MAX_TOTAL)}를 넘었어요. 큰 영상은 빼고 링크나 카톡으로 보내 주세요.`;
-  if (type === "blog" && !up.count && !form.querySelector("[name='사진·동영상 링크']").value.trim() && !form.querySelector("[name='사진 카톡 전송']").checked) {
-    form.querySelector(".drop").scrollIntoView({ behavior: "smooth", block: "center" });
+  if (type === "blog" && !up.media.count && !form.querySelector("[name='사진·동영상 링크']").value.trim() && !form.querySelector("[name='사진 카톡 전송']").checked) {
+    form.querySelector("[data-uploader] .drop").scrollIntoView({ behavior: "smooth", block: "center" });
     return "구역 사진·동영상을 한 개 이상 올려 주세요.";
   }
   return "";
@@ -542,14 +576,14 @@ async function copyFallback(form, text) {
   showResult(form, "copy",
     (copied ? "📋 <b>요청서를 복사했어요.</b> 카톡 대표님 채팅방에 붙여넣어 보내 주세요."
             : "아래 내용을 길게 눌러 복사한 뒤 카톡으로 보내 주세요.") +
-    (form._up.count ? `<br>📷 고른 사진·영상 ${form._up.count}개는 <b>카톡으로 함께 보내 주세요.</b>` : "") +
+    (form._up.count ? `<br>📎 고른 파일·사진 ${form._up.count}개는 <b>카톡으로 함께 보내 주세요.</b>` : "") +
     `<textarea readonly style="margin-top:10px;min-height:160px">${text.replace(/</g, "&lt;")}</textarea>`);
 }
 
 function setup(type) {
   const form = document.getElementById(`form-${type}`);
   const btn = form.querySelector("button[type=submit]");
-  form._up = makeUploader(form.querySelector("[data-uploader]"));
+  form._up = bothUploaders(makeUploader(form.querySelector("[data-docs]"), "docs"), makeUploader(form.querySelector("[data-uploader]")));
 
   form.addEventListener("submit", async e => {
     e.preventDefault();
@@ -558,13 +592,14 @@ function setup(type) {
     if (problem) { showResult(form, "err", problem); return; }
     const up = form._up;
     const fields = collect(form);
-    const scenes = type === "shorts" ? getScenes() : null;
+    let scenes = type === "shorts" ? getScenes() : null;
+    if (scenes && !scenes.length) scenes = null; // 요청서 파일만 올린 경우
     const text = toText(type, fields, null, up.names());
 
     if (!SCRIPT_URL) return copyFallback(form, text);
 
     btn.disabled = true;
-    btn.textContent = up.count ? `사진·영상 ${up.count}개 올리는 중… (${fmtMB(up.size)})` : "보내는 중…";
+    btn.textContent = up.count ? `첨부 ${up.count}개 올리는 중… (${fmtMB(up.size)})` : "보내는 중…";
     try {
       const payload = { type, fields, text, files: await up.payload() };
       if (scenes) { payload.scenes = scenes; payload.shortsJson = shortsJson(fields, scenes); }
