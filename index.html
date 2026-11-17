@@ -55,6 +55,23 @@
   .card h3 { margin: 6px 0 6px; font-size: 18px; }
   .card p { margin: 0; font-size: 15px; color: #4d4035; }
 
+  .big-msg { font-family: "Black Han Sans", sans-serif; font-size: clamp(24px, 5.5vw, 32px); line-height: 1.3; margin: 6px 0 4px; }
+  .big-msg em { font-style: normal; color: var(--orange); }
+  .cards.two { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .card ul { margin: 6px 0 0; padding-left: 18px; font-size: 15px; color: #4d4035; }
+  .card ul li { margin: 3px 0; }
+  .pill { display: inline-block; background: var(--orange); color: #fff; font-weight: 900; font-size: 14px; padding: 3px 12px; border-radius: 999px; }
+  .quote { margin: 16px 0 0; padding: 14px 18px; border-left: 4px solid var(--orange); background: var(--cream); border-radius: 0 12px 12px 0; font-size: 16px; }
+  .sub-h { margin: 34px 0 4px; font-size: 21px; font-weight: 900; }
+  .persona { position: relative; }
+  .pnum { position: absolute; top: 16px; right: 18px; font-family: "Black Han Sans", sans-serif; font-size: 34px; color: var(--orange-soft); -webkit-text-stroke: 1px var(--orange); line-height: 1; }
+  .persona .psub { color: var(--muted); font-size: 14px; margin: 0 0 10px; }
+  .persona dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; margin: 0; font-size: 15px; }
+  .persona dt { font-weight: 900; color: var(--orange-deep); }
+  .persona dd { margin: 0; }
+  .insight { margin: 16px 0 0; padding: 14px 18px; background: var(--ink); color: #fff; border-radius: 12px; font-size: 15px; }
+  .insight b { color: #ffcf9e; margin-right: 8px; }
+
   /* 흐름 */
   .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; counter-reset: step; }
   .flow div { background: var(--orange-soft); border-radius: 14px; padding: 16px 14px; position: relative; font-size: 15px; }
@@ -166,24 +183,65 @@
   <!-- 1. 마케팅이란 -->
   <section id="what">
     <h2><span class="num">01</span>투미가 말하는 마케팅</h2>
-    <p class="lead">마케팅은 광고비를 쓰는 일이 아닙니다. <b>여러분이 현장에서 아는 정보를 고객이 찾을 수 있는 곳에 올려 두는 일</b>입니다.</p>
-    <div class="cards">
+    <p class="big-msg">마케팅은 <em>본능분석</em>과 <em>반박제거</em>다</p>
+    <p class="lead">설득이 아니라, 손님의 본능을 읽고 결정의 걸림돌을 걷어내는 일입니다.</p>
+    <div class="cards two">
       <div class="card">
-        <div class="ico">🔎</div>
-        <h3>블로그: 찾아오는 고객</h3>
-        <p>고객은 "○○구역 진행상황", "○○구역 매물"을 검색합니다. 그때 투미 글이 보이면 그 구역을 가장 잘 아는 곳으로 기억합니다.</p>
+        <div class="pill">① 본능분석</div>
+        <h3>손님이 진짜 원하는 것을 읽는다</h3>
+        <ul>
+          <li>이 손님은 무엇을 두려워하고, 무엇을 얻고 싶은가</li>
+          <li>예산·주거 상황·타이밍에 숨은 진짜 니즈 파악</li>
+          <li>겉으로 한 말이 아니라, 결정의 '동기'를 본다</li>
+        </ul>
       </div>
       <div class="card">
-        <div class="ico">⚡</div>
-        <h3>쇼츠: 멈춰 세우는 고객</h3>
-        <p>15~30초 안에 핵심 숫자 하나로 관심을 끕니다. 영상을 본 사람이 검색하면 블로그로 이어집니다.</p>
-      </div>
-      <div class="card">
-        <div class="ico">🧑‍💼</div>
-        <h3>원료는 여러분의 현장 정보</h3>
-        <p>조합 분위기, 최근 실거래, 사진 한 장이 글의 질을 결정합니다. 작성과 편집은 본사에서 맡고, 여러분은 정보만 보내 주면 됩니다.</p>
+        <div class="pill">② 반박제거</div>
+        <h3>결정을 막는 걸림돌을 하나씩 없앤다</h3>
+        <ul>
+          <li>불안(대출·리스크), 의심(사업 지연), 비교(다른 구역)</li>
+          <li>반박이 나오기 전에 근거로 먼저 해소한다</li>
+          <li>걸림돌이 사라지면 손님은 스스로 결정한다</li>
+        </ul>
       </div>
     </div>
+    <p class="quote">손님은 설득당하고 싶지 않다 — <b>확신을 얻고 싶을 뿐이다.</b></p>
+
+    <h3 class="sub-h">같은 10억대라도, 본능은 다르다</h3>
+    <p class="lead">예산이 같아도 손님의 상황과 니즈에 따라 접근 전략이 달라집니다.</p>
+    <div class="cards">
+      <div class="card persona">
+        <div class="pnum">1</div>
+        <h3>무주택자</h3>
+        <p class="psub">처음 내 집 마련</p>
+        <dl>
+          <dt>본능</dt><dd>안정 · 불안 해소</dd>
+          <dt>반박</dt><dd>대출·리스크가 겁난다</dd>
+          <dt>접근</dt><dd>사업 단계별 안전장치를 근거로 제시</dd>
+        </dl>
+      </div>
+      <div class="card persona">
+        <div class="pnum">2</div>
+        <h3>상급지 갈아타기</h3>
+        <p class="psub">이미 유주택 · 자산 레벨업</p>
+        <dl>
+          <dt>본능</dt><dd>더 좋은 입지로 이동</dd>
+          <dt>반박</dt><dd>타이밍·세금이 애매하다</dd>
+          <dt>접근</dt><dd>구역 비교와 시나리오로 판단 지원</dd>
+        </dl>
+      </div>
+      <div class="card persona">
+        <div class="pnum">3</div>
+        <h3>선호 구역이 있는 손님</h3>
+        <p class="psub">마음속 정답이 이미 있음</p>
+        <dl>
+          <dt>본능</dt><dd>내 선택이 맞다는 확신</dd>
+          <dt>반박</dt><dd>마지막 남은 의심 하나</dd>
+          <dt>접근</dt><dd>설득이 아니라 '확인'을 해준다</dd>
+        </dl>
+      </div>
+    </div>
+    <p class="insight"><b>회장님 인사이트</b> 이미 사려는 손님은 말이 더 많고, 원하는 구역을 안다 — 우리의 역할은 설득이 아니라 확인이다.</p>
 
     <h3 style="margin:28px 0 10px;font-size:18px">요청부터 업로드까지</h3>
     <div class="flow">
