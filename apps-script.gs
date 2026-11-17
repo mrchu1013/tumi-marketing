@@ -27,7 +27,7 @@ function doPost(e) {
     const row = { '접수시각': new Date(), '상태': '접수' };
     Object.keys(fields).forEach(function (k) { row[k] = String(fields[k]).slice(0, 5000); });
     if (data.scenes) {
-      row['장면 자막'] = data.scenes.map(function (s, i) { return (i + 1) + '. ' + s['그림'] + ' ' + s['자막']; }).join('\n');
+      row['자막 줄'] = data.scenes.map(function (s, i) { return (i + 1) + '. ' + s['그림'] + ' ' + s['자막']; }).join('\n');
     }
     if (data.shortsJson) row['숏츠메이커 JSON'] = JSON.stringify(data.shortsJson, null, 2);
 

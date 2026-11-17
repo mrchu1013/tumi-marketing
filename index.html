@@ -108,11 +108,13 @@
   .check { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; margin: 8px 0; font-weight: 500; }
   .check input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--orange); flex: none; }
 
-  .scenes { display: grid; gap: 8px; }
-  .scene { display: grid; grid-template-columns: 64px 1fr 38px; gap: 8px; align-items: center; }
-  .scene select { padding: 10px 4px; text-align: center; font-size: 20px; }
-  .scene button { height: 44px; border: 1.5px solid var(--line); background: #fff; border-radius: 10px; cursor: pointer; font-size: 18px; color: var(--muted); }
-  .addbtn { margin-top: 8px; border: 1.5px dashed var(--orange); background: var(--orange-soft); color: var(--orange-deep); font: inherit; font-weight: 700; border-radius: 10px; padding: 9px 14px; cursor: pointer; }
+  details.example { background: var(--cream); border-radius: 12px; padding: 12px 16px; margin-bottom: 18px; }
+  details.example summary { cursor: pointer; font-weight: 700; color: var(--orange-deep); }
+  .ex-body { margin-top: 10px; font-size: 15px; }
+  .ex-body p { margin: 0 0 10px; }
+  .ex-body .ex-tag { display: inline-block; margin: 6px 0 4px; background: var(--orange); color: #fff; font-weight: 900; font-size: 12px; padding: 1px 10px; border-radius: 999px; }
+  .ex-body .ex-note { color: var(--muted); font-size: 13px; }
+  .tumi-form th small { font-weight: 500; color: var(--muted); font-size: 12px; }
 
   .drop { display: block; border: 2px dashed var(--orange); background: var(--orange-soft); border-radius: 14px; padding: 20px 14px; text-align: center; cursor: pointer; color: var(--orange-deep); font-weight: 700; }
   .drop.over { background: #ffe2c6; }
@@ -262,18 +264,33 @@
 
     <!-- 쇼츠 -->
     <div class="panel" id="panel-shorts" role="tabpanel" aria-labelledby="tab-shorts" hidden>
-      <div class="need">🎬 쇼츠는 <b>주황 배경에 큰 자막</b>이 한 장면씩 넘어가는 형식입니다. 장면마다 <b>자막 한 줄</b>만 적으면 되고, 숫자 하나가 들어간 짧은 문장이 가장 잘 됩니다.</div>
       <form id="form-shorts" novalidate>
         <div class="hp" aria-hidden="true"><label>비워두세요<input type="text" name="_hp" tabindex="-1" autocomplete="off"></label></div>
-        <div class="row2">
-          <div class="field"><label for="s-name">담당자<span class="req">*</span></label><input type="text" id="s-name" name="담당자" required autocomplete="name"></div>
-          <div class="field"><label for="s-zone">구역명<span class="req">*</span></label><input type="text" id="s-zone" name="구역명" required placeholder="예) 마천1구역"></div>
-        </div>
-        <div class="field"><label for="s-date">희망 업로드일</label><input type="date" id="s-date" name="희망 업로드일" style="max-width:260px"></div>
-        <div class="field">
-          <span class="lbl">장면 자막<span class="req">*</span><span class="hint">3~6개를 추천합니다. 마지막 장면은 문의 유도 문구로 두세요.</span></span>
-          <div class="scenes" id="scenes"></div>
-          <button type="button" class="addbtn" id="add-scene">+ 장면 추가</button>
+        <details class="example">
+          <summary>📝 예시 대본 보기 (북아현2구역)</summary>
+          <div class="ex-body">
+            <p class="ex-tag">도입</p>
+            <p>재개발 투자, 사업이 언제 끝날지 몰라 망설이셨나요?<br>그렇다면 지금 북아현2구역을 주목해 보세요.</p>
+            <p class="ex-tag">본문</p>
+            <p>북아현2구역은 현재 관리처분인가 이후 이주가 진행되고 있는 단계입니다.<br>재개발 투자에서 가장 큰 리스크 중 하나인 사업 지연에 대한 불확실성이 사업 초기보다 상당 부분 줄어든 시점이죠.</p>
+            <p>입지도 상당히 매력적입니다.<br>시청과 광화문, 여의도 업무지구와 가까워 탄탄한 직주근접 배후 수요를 기대할 수 있고,<br>향후 북아현뉴타운이 완성되면 주변 주거환경과 생활 인프라에도 큰 변화가 기대됩니다.</p>
+            <p>특히 지금은 이주가 진행되면서 급매물이 등장하고 있는 시기!<br>16억대를 유지하던 프리미엄도<br>현재 15억대로 내려온 상황입니다</p>
+            <p class="ex-tag">마무리</p>
+            <p>초기투자 16억대로 앞으로 5년 내외로 아현역 인근 신축 아파트, 84타입 입주를 목표로 하시는 분이라면 북아현2구역을 눈여겨보세요.<br>좋은 매물은 타이밍입니다.<br>투미부동산으로 편하게 문의 주세요</p>
+            <p class="ex-note">※ 예시의 단계·금액은 작성 당시 기준입니다. 실제 요청에는 최신 정보로 써 주세요.</p>
+          </div>
+        </details>
+        <div class="tumi-form">
+          <h3 class="tf-title">투미 쇼츠 대본 요청</h3>
+          <p class="tf-sub">도입 → 본문 → 마무리 순서로 써 주세요</p>
+          <table>
+            <tr><th><label for="s-name">담당자<span class="req">*</span></label></th><td><input type="text" id="s-name" name="담당자" required autocomplete="name"></td></tr>
+            <tr><th><label for="s-zone">구역명<span class="req">*</span></label></th><td><input type="text" id="s-zone" name="구역명" required placeholder="예) 북아현2구역"></td></tr>
+            <tr><th><label for="s-hook">도입<span class="req">*</span><br><small>(시선 끄는<br>질문 1~2줄)</small></label></th><td><textarea id="s-hook" name="도입" required rows="3" placeholder="ex) 재개발 투자, 사업이 언제 끝날지 몰라 망설이셨나요?&#10;그렇다면 지금 ○○구역을 주목해 보세요."></textarea></td></tr>
+            <tr><th><label for="s-body">본문<span class="req">*</span><br><small>(사업 단계·입지·<br>가격 상황)</small></label></th><td><textarea id="s-body" name="본문" required rows="9" placeholder="ex) 현재 사업 단계와 그 의미&#10;입지 장점 (업무지구·역·생활 인프라)&#10;지금 시장 상황 (급매, 프리미엄 변화 등)"></textarea></td></tr>
+            <tr><th><label for="s-end">마무리<span class="req">*</span><br><small>(누구에게 맞는지<br>+ 문의 유도)</small></label></th><td><textarea id="s-end" name="마무리" required rows="4" placeholder="ex) 초기투자 ○억대로 ○년 내 신축 입주를 목표로 하시는 분이라면 눈여겨보세요.&#10;좋은 매물은 타이밍입니다.&#10;투미부동산으로 편하게 문의 주세요"></textarea></td></tr>
+            <tr><th><label for="s-ask">요청사항<br><small>(분위기·강조점·<br>참고 영상)</small></label></th><td><textarea id="s-ask" name="요청사항" rows="3"></textarea></td></tr>
+          </table>
         </div>
         <div class="field">
           <span class="lbl">사진·영상 올리기<span class="hint">현장 사진이나 영상이 있으면 이모지 대신 사용합니다. 없으면 비워도 됩니다.</span></span>
@@ -284,8 +301,7 @@
           <div class="field" style="margin-top:10px"><label for="s-media">구글 드라이브 / 네이버 MYBOX 공유 링크</label><input type="url" id="s-media" name="사진·영상 링크" placeholder="https://drive.google.com/..."></div>
           <label class="check"><input type="checkbox" name="사진 카톡 전송" value="예">큰 영상은 카톡으로 따로 보낼게요.</label>
         </details>
-        <div class="field" style="margin-top:14px"><label for="s-ask">요청사항<span class="hint">분위기, 강조할 점, 참고 영상 링크 등</span></label><textarea id="s-ask" name="요청사항"></textarea></div>
-        <label class="check"><input type="checkbox" name="사실 확인" value="확인함" required>자막의 숫자는 제가 직접 확인한 최신 정보입니다.<span class="req">*</span></label>
+        <label class="check"><input type="checkbox" name="사실 확인" value="확인함" required>대본의 단계·금액은 제가 직접 확인한 최신 정보입니다.<span class="req">*</span></label>
         <div class="actions">
           <button type="submit" class="btn primary">요청 보내기</button>
           <button type="button" class="btn sub" data-save>📄 작성 내용 파일로 저장</button>
@@ -314,10 +330,6 @@
 const SCRIPT_URL = "";
 /* ====================================================================== */
 
-const EMOJIS = ["💵","📈","✅","🏢","🚇","🏫","🌳","📍","🔥","📞","🏠","📝"];
-const DEFAULT_SCENES = [
-  ["💵", ""], ["✅", ""], ["🏢", ""], ["📞", "자세한 건 투미에 문의하세요"]
-];
 
 // ---------- 탭 ----------
 const tabs = { blog: document.getElementById("tab-blog"), shorts: document.getElementById("tab-shorts") };
@@ -333,26 +345,23 @@ tabs.shorts.onclick = () => showTab("shorts");
 document.querySelectorAll("[data-go]").forEach(a => a.addEventListener("click", () => showTab(a.dataset.go)));
 if (location.hash === "#shorts") showTab("shorts");
 
-// ---------- 쇼츠 장면 ----------
-const scenesEl = document.getElementById("scenes");
-function addScene(emoji = "🏠", text = "") {
-  if (scenesEl.children.length >= 8) return;
-  const row = document.createElement("div");
-  row.className = "scene";
-  row.innerHTML = `<select aria-label="장면 그림">${EMOJIS.map(e => `<option${e === emoji ? " selected" : ""}>${e}</option>`).join("")}</select>
-    <input type="text" aria-label="장면 자막" maxlength="24" placeholder="예) 갭 9억 1천만 원">
-    <button type="button" aria-label="장면 삭제">✕</button>`;
-  row.querySelector("input").value = text;
-  row.querySelector("button").onclick = () => { if (scenesEl.children.length > 1) row.remove(); };
-  scenesEl.appendChild(row);
+// ---------- 쇼츠 대본 → 장면 ----------
+// 도입·본문·마무리의 한 줄 = 장면 하나. 그림은 내용으로 대충 골라 두고, 제작할 때 다듬습니다.
+function pickEmoji(t) {
+  if (/문의|연락|투미/.test(t)) return "📞";
+  if (/억|만\s*원|프리미엄|투자금|급매|시세/.test(t)) return "💵";
+  if (/관리처분|이주|철거|착공|조합|인가|단계/.test(t)) return "✅";
+  if (/(?<!구)역|지하철|교통|노선/.test(t)) return "🚇";
+  if (/업무지구|광화문|여의도|강남|직주/.test(t)) return "🏙️";
+  if (/입주|신축|아파트|세대|타입/.test(t)) return "🏢";
+  if (/\?/.test(t)) return "🤔";
+  return "🏠";
 }
-DEFAULT_SCENES.forEach(([e, t]) => addScene(e, t));
-document.getElementById("add-scene").onclick = () => addScene();
-
 function getScenes() {
-  return [...scenesEl.querySelectorAll(".scene")]
-    .map(r => ({ 자막: r.querySelector("input").value.trim(), 그림: r.querySelector("select").value }))
-    .filter(s => s.자막);
+  const f = document.getElementById("form-shorts");
+  return ["도입", "본문", "마무리"].flatMap(k =>
+    f.querySelector(`[name="${k}"]`).value.split(/\n+/).map(s => s.trim()).filter(Boolean)
+  ).map(t => ({ 자막: t, 그림: pickEmoji(t) }));
 }
 
 // 투미숏츠메이커 매물 JSON 형식
@@ -363,7 +372,7 @@ function shortsJson(fields, scenes) {
     _설명: `${fields["담당자"]} 요청 (${new Date().toLocaleString("ko-KR")}). 올리기 전에 숫자를 다시 확인하세요.`,
     출력이름: `${zone}_${stamp}`,
     구역: zone,
-    장면: scenes.map((s, i) => ({ 자막: s.자막, 그림: s.그림, 초: i === scenes.length - 1 ? 2.6 : 2.4 })),
+    장면: scenes.map(s => ({ 자막: s.자막, 그림: s.그림, 초: Math.max(2.4, Math.round(s.자막.replace(/\s/g, "").length * 0.17 * 10) / 10) })),
     음성: null,
     배경음악: null
   };
@@ -476,8 +485,7 @@ function validate(form, type) {
     el.style.borderColor = bad ? "var(--red)" : "";
     if (bad && !firstBad) firstBad = el;
   });
-  if (type === "shorts" && getScenes().length === 0) firstBad = firstBad || scenesEl.querySelector("input");
-  if (firstBad) { firstBad.focus(); return "빨간 테두리 칸을 채워 주세요." + (type === "shorts" && !getScenes().length ? " 장면 자막도 한 줄 이상 필요합니다." : ""); }
+  if (firstBad) { firstBad.focus(); return "빨간 테두리 칸을 채워 주세요."; }
   const up = form._up;
   if (up.busy) return "사진을 정리하는 중이에요. 잠시 뒤 다시 눌러 주세요.";
   if (up.tooBig) return `첨부 파일이 ${fmtMB(MAX_TOTAL)}를 넘었어요. 큰 영상은 빼고 링크나 카톡으로 보내 주세요.`;
@@ -526,7 +534,7 @@ function setup(type) {
     const up = form._up;
     const fields = collect(form);
     const scenes = type === "shorts" ? getScenes() : null;
-    const text = toText(type, fields, scenes, up.names());
+    const text = toText(type, fields, null, up.names());
 
     if (!SCRIPT_URL) return copyFallback(form, text);
 
@@ -541,7 +549,6 @@ function setup(type) {
       showResult(form, "ok", `✅ <b>요청이 접수됐어요.</b> (${fields["구역명"]}${up.count ? ` · 첨부 ${up.count}개` : ""}) 작성 후 확인 연락을 드립니다.`);
       form.reset();
       up.clear();
-      if (type === "shorts") { scenesEl.innerHTML = ""; DEFAULT_SCENES.forEach(([e, t]) => addScene(e, t)); }
     } catch (err) {
       showResult(form, "err", "전송에 실패했어요. 잠시 뒤 다시 누르거나, 아래 내용을 카톡으로 보내 주세요.");
       copyFallback(form, text);
@@ -552,15 +559,14 @@ function setup(type) {
 
   form.querySelector("[data-save]").onclick = () => {
     const fields = collect(form);
-    const text = toText(type, fields, type === "shorts" ? getScenes() : null, form._up.names());
+    const text = toText(type, fields, null, form._up.names());
     download(`${type === "blog" ? "블로그요청" : "쇼츠요청"}_${fields["구역명"] || "작성중"}.txt`, text);
   };
   const blankBtn = form.querySelector("[data-blank]");
   if (blankBtn) blankBtn.onclick = () => {
     const blank = {};
     Object.keys(collect(form)).forEach(k => blank[k] = "");
-    const sc = type === "shorts" ? [1, 2, 3, 4].map(() => ({ 그림: "□", 자막: "" })) : null;
-    download(`${type === "blog" ? "블로그요청" : "쇼츠요청"}_빈양식.txt`, toText(type, blank, sc));
+    download(`${type === "blog" ? "블로그요청" : "쇼츠요청"}_빈양식.txt`, toText(type, blank));
   };
 }
 setup("blog");
