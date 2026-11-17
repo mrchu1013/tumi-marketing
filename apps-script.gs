@@ -93,7 +93,7 @@ function json_(obj) {
 function testRequest() {
   const res = doPost({ postData: { contents: JSON.stringify({
     type: 'blog',
-    fields: { '담당자': '테스트', '업무폰 번호': '010-0000-0000', '구역명': '테스트구역', '사업진행 상세현황': '테스트', '구역 특장점': '테스트', '사실 확인': '확인함' },
+    fields: { '담당자': '테스트','구역명': '테스트구역', '사업진행 상세현황': '테스트', '구역 특장점': '테스트', '사실 확인': '확인함' },
     text: '[테스트 요청]',
     files: [{ name: '테스트.txt', type: 'text/plain', data: Utilities.base64Encode('첨부 테스트', Utilities.Charset.UTF_8) }]
   }) } });
